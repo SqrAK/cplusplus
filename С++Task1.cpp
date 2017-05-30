@@ -38,6 +38,65 @@ void printMenu()
 	std::cout << "Введите команду: ";
 }
 
+void getRange(std::vector<int> v, int &a, int &b) {
+	std::string str;
+	bool in = false;
+	a = -1;
+	std::cout << "Введите левую границу" << std::endl;
+	while ((a < 0) || (a >= v.size()))
+	{
+		in = false;
+		while (!in)
+		{
+			try {
+				std::cin >> str;
+				a = stoi(str);
+				in = true;
+			}
+			catch (std::invalid_argument e) {
+				std::cout << "Введен неверный символ! Повторите ввод" << std::endl;
+			}
+		}
+		if (a < 0)
+			std::cout << "Число должно быть не меньше 0! Повторите ввод" << std::endl;
+		else if (a >= v.size())
+			std::cout << "Число превышает размер вектора (" << v.size() << ")! Повторите ввод" << std::endl;
+		else in = true;
+	}
+
+	b = -1;
+	std::cout << "Введите правую границу" << std::endl;
+	while ((b >= v.size()) || (b < a))
+	{
+		in = false;
+		while (!in)
+		{
+			try {
+				
+				std::cin >> str;
+				b = stoi(str);
+				in = true;
+			}
+			catch (std::invalid_argument e) {
+				std::cout << "Введен неверный символ! Повторите ввод" << std::endl;
+			}
+		}
+		if (b >= v.size())
+			std::cout << "Число вне диапазона (0.." << v.size() - 1 << ")! Повторите ввод" << std::endl;
+		else if (b < a)
+			std::cout << "Число должно быть больше левой границы (" << a << ")! Повторите ввод" << std::endl;
+		else in = true;
+	}
+}
+
+void getToElems(std::vector<int>::iterator &left, std::vector<int>::iterator &right, int a, int b) {
+	for (int i = 0; i < a; i++)
+		left++;
+	for (int i = 0; i <= b; i++)
+		right++;
+}
+
+
 bool TryOpenFile(std::string filename) 
 {
 	std::ifstream file(filename);
@@ -115,7 +174,7 @@ int getOdd(std::vector<int> v)
 {
 	for (int x : v)
 	{
-		if (x % 2 == 1) 
+		if (x % 2 != 0) 
 		{
 			return x;
 		}
@@ -128,7 +187,7 @@ int getOdd(std::vector<int>::iterator begin, std::vector<int>::iterator end)
 {
 	for (auto it = begin; it != end; it++)
 	{
-		if (*it % 2 == 1) 
+		if (*it % 2 != 0) 
 		{
 			return *it;
 		}
@@ -273,7 +332,10 @@ int main()
 	bool exit = false;
 	int res, x, y;
 	std::string filename;
-	std::vector<int> vector;
+	std::vector<int> vector, modV;
+	std::vector<int>::iterator left = vector.begin();
+	std::vector<int>::iterator right = vector.begin();
+
 
 	while (!exit)
 	{
@@ -283,7 +345,8 @@ int main()
 		switch (res)
 		{
 			case 1: 
-				filename = inputFileName();
+				std::cout << "Введите имя файла\n";
+				std::cin >> filename;
 				std::cout << "Введите количество элементов\n";
 				std::cin >> x;
 				std::cout << "Введите диапазон\n";
@@ -306,9 +369,13 @@ int main()
 			case 4:
 				std::cout << "Вектор до изменений" << std::endl;
 				printConsole(vector);
-				vector = modify(vector.begin(), vector.end());
+				int a, b;
+				getRange(vector, a, b);
+				left = right = vector.begin();
+				getToElems(left, right, a, b);
+				modV = modify(left, right);
 				std::cout << "Вектор измененный" << std::endl;
-				printConsole(vector);
+				printConsole(modV);
 				break;
 			case 5:
 				std::cout << "Вектор до изменений" << std::endl;
@@ -334,7 +401,8 @@ int main()
 				printConsole(vector);
 				break;
 			case 9:
-				filename = inputFileName();
+				std::cout << "Введите имя файла\n";
+				std::cin >> filename;
 				printFile(filename, vector);
 				break;
 			case 0:
