@@ -38,6 +38,16 @@ void printMenu()
 	std::cout << "Введите команду: ";
 }
 
+
+bool isEmpty(std::vector<int> v)
+{
+	if (v.empty()) {
+		std::cout << "Контейнер пуст" << std::endl;
+		return true;
+	}
+	return false;
+}
+
 void getRange(std::vector<int> v, int &a, int &b) {
 	std::string str;
 	bool in = false;
@@ -207,13 +217,19 @@ std::vector<int> modify(std::vector<int> v)
 }
 
 //добавление к каждому числу первое нечетное (iterator)
-std::vector<int> modify(std::vector<int>::iterator begin, std::vector<int>::iterator end)
+std::vector<int> modify(std::vector<int>::iterator b, std::vector<int>::iterator begin, std::vector<int>::iterator end, std::vector<int>::iterator e)
 {
 	std::vector<int> v;
 	int oddInt = getOdd(begin, end);
+	for (std::vector<int>::iterator it = b; it != begin; it++) {
+		v.push_back(*it);
+	}
 	for (std::vector<int>::iterator it = begin; it != end; it++)
 	{
 		v.push_back(*it + oddInt);
+	}
+	for (std::vector<int>::iterator it = end; it != e; it++) {
+		v.push_back(*it);
 	}
 	return v;
 }
@@ -367,15 +383,20 @@ int main()
 				printConsole(vector);
 				break;
 			case 4:
+				if (!isEmpty(vector)) {
 				std::cout << "Вектор до изменений" << std::endl;
 				printConsole(vector);
 				int a, b;
 				getRange(vector, a, b);
 				left = right = vector.begin();
 				getToElems(left, right, a, b);
-				modV = modify(left, right);
+				vector = modify(vector.begin(), left, right, vector.end());
 				std::cout << "Вектор измененный" << std::endl;
 				printConsole(modV);
+				}
+				else {
+					std::cout << "Вектор пуст!" << std::endl;
+				}
 				break;
 			case 5:
 				std::cout << "Вектор до изменений" << std::endl;
@@ -391,10 +412,17 @@ int main()
 				std::cout << "Вектор измененный" << std::endl;
 				printConsole(vector);
 				break;
-			case 7:std::cout << "Вектор" << std::endl;
+			case 7:
+				if (!isEmpty(vector)) {
+				std::cout << "Вектор" << std::endl;
 				printConsole(vector);
 				std::cout << "Сумма:" << sum(vector) << std::endl;
 				std::cout << "Среднее арифметическое:" << average(vector) << std::endl;
+				}
+				else {
+					std::cout << "Вектор пуст!" << std::endl;
+				}
+
 				break;
 			case 8:
 				std::cout << "Вектор\n";
